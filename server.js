@@ -7,7 +7,7 @@ import { handleChat } from './src/app/middlewares/handleChat.js';
 import { handleSocket } from './src/app/middlewares/socketHandler.js';
 import config from './src/config/index.js';
 
-const PORT = 5000;
+
 
 async function startServer() {
   try {
@@ -30,8 +30,8 @@ async function startServer() {
       // console.log("Socket connected:", socket.id);
     });
 
-    server.listen(PORT, () => {
-      console.log(`Application listening on port ${PORT}`);
+    server.listen(config.port, () => {
+      console.log(`Application listening on port ${config.port}`);
     });
   } catch (err) {
     console.log('Failed to connect to the database');
