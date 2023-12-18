@@ -2,14 +2,14 @@ import Redis from 'ioredis';
 
 const pub = new Redis({
   host: 'redis-3445ffdc-rohitkhan4141-ec69.a.aivencloud.com',
-  port: 12953,
+  port: 12952,
   username: 'default',
   password: 'AVNS_wompTucbkcNN7mGxy8P',
 });
 
 const sub = new Redis({
   host: 'redis-3445ffdc-rohitkhan4141-ec69.a.aivencloud.com',
-  port: 12953,
+  port: 12952,
   username: 'default',
   password: 'AVNS_wompTucbkcNN7mGxy8P',
 });
