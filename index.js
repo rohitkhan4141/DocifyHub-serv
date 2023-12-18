@@ -6,13 +6,13 @@ import router from './src/app/routes/index.js';
 const app = express();
 
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: '*', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 200,
 };
 
-app.use(cors(corsOptions)); // Use the CORS middleware with custom options
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
