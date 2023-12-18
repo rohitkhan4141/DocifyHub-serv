@@ -4,7 +4,7 @@ import Document from '../modules/documents/Document.model.js';
 // Create Redis clients
 const redisClient = new Redis({
   host: 'redis-3445ffdc-rohitkhan4141-ec69.a.aivencloud.com',
-  port: 12952,
+  port: 12953,
   username: 'default',
   password: 'AVNS_wompTucbkcNN7mGxy8P',
 });
