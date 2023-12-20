@@ -14,8 +14,6 @@ const verifyToken = (req, res, next) => {
   
   jwt.verify(token, config.jwt.secret, (err, decoded) => {
     if (err) {
-      console.log("first")
-      // Token verification failed
       if (err.name === 'TokenExpiredError') {
         return res.status(401).send({ message: 'Token expired' });
       } else {
@@ -23,8 +21,7 @@ const verifyToken = (req, res, next) => {
         return res.status(403).send({ message: 'Forbidden access' });
       }
     }
-    // Token is valid
-    req.decoded = decoded; // Store decoded token information in the request object
+    req.decoded = decoded; 
     next();
   });
 };

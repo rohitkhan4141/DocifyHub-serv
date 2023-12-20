@@ -1,29 +1,22 @@
 import Redis from 'ioredis';
 import Document from '../modules/documents/Document.model.js';
 
-// Create Redis clients
 const redisClient = new Redis({
-  host: 'redis-3445ffdc-rohitkhan4141-ec69.a.aivencloud.com',
-  port: 12952,
-  username: 'default',
-  password: 'AVNS_wompTucbkcNN7mGxy8P',
-});
+    host: 'redis-3445ffdc-rohitkhan4141-ec69.a.aivencloud.com',
+    port: 12952,
+    username: 'default',
+    password: 'AVNS_wompTucbkcNN7mGxy8P',
+  });
 
 async function handleSocket(io) {
   io.on('connection', (socket) => {
     socket.on('get-document', async (documentId) => {
-      const document = await findOrCreateDocumentFromCache(documentId);
+      const document = await findOrCreateDocumentFromCacheOrDB(documentId);
 
-      // If the document is not found in the cache, fetch it from the database
       if (!document) {
-        const docFromDB = await findOrCreateDocumentFromDB(documentId);
-        if (docFromDB) {
-          // Store the document in the cache for future use
-          await setDocumentInCache(documentId, docFromDB.content);
-          socket.emit('load-document', docFromDB.content);
-        }
+        return;
       } else {
-        socket.emit('load-document', document);
+        socket.emit('load-document', document.content);
       }
 
       socket.join(documentId);
@@ -33,36 +26,39 @@ async function handleSocket(io) {
       });
 
       socket.on('save-document', async (data) => {
-        await updateDocumentInDB(documentId, data);
-        // Update the document in the cache as well
-        await setDocumentInCache(documentId, data);
+        await updateDocument(documentId, data);
       });
     });
   });
 }
 
-async function findOrCreateDocumentFromDB(id) {
+async function findOrCreateDocumentFromCacheOrDB(id) {
   if (id == null) return;
 
+  // Check if the document exists in the cache
+  const cachedDocument = await redisClient.get(`document:${id}`);
+  if (cachedDocument) {
+    return JSON.parse(cachedDocument);
+  }
+
+  // If not in cache, fetch from the database
   const document = await Document.findById(id);
-  return document;
+  if (document) {
+    // Set the document in Redis cache for future use
+    await redisClient.set(`document:${id}`, JSON.stringify(document));
+    return document;
+  }
+
+  return null;
 }
 
-async function findOrCreateDocumentFromCache(id) {
-  if (id == null) return;
-
-  const document = await redisClient.get(`document:${id}`);
-  return document ? JSON.parse(document) : null;
-}
-
-async function setDocumentInCache(id, content) {
-  await redisClient.set(`document:${id}`, JSON.stringify(content));
-}
-
-async function updateDocumentInDB(id, content) {
+async function updateDocument(id, content) {
   if (id == null) return;
 
   await Document.findByIdAndUpdate(id, { content });
+
+  // Update the cached document in Redis after updating in the database
+  await redisClient.set(`document:${id}`, JSON.stringify({ _id: id, content }));
 }
 
 export { handleSocket };

@@ -11,5 +11,9 @@ export default {
     secret: process.env.JWT_SECRET,
     expires_in: process.env.JWT_EXPIRES_IN,
   },
+  redis_host: process.env.REDIS_HOST,
+  redis_port: process.env.REDIS_PORT,
+  redis_userName : process.env.REDIS_USERNAME,
+  redis_password : process.env.PASSWORD
   
 };
